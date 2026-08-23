@@ -13,6 +13,11 @@ import requests
 import runpod
 
 
+DOWNLOAD_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36"
+}
+
+
 DEFAULT_ENV = {
     "FACEFUSION_VIDEO_PRESET": "identity",
     "FACE_SWAPPER_MODEL": "inswapper_128_fp16",
@@ -60,7 +65,7 @@ def _output_suffix_for_target(path: Path) -> str:
 
 
 def _download(url: str, path: Path) -> None:
-    with requests.get(url, stream=True, timeout=(15, 300)) as response:
+    with requests.get(url, headers=DOWNLOAD_HEADERS, stream=True, timeout=(15, 300)) as response:
         response.raise_for_status()
         with path.open("wb") as file:
             shutil.copyfileobj(response.raw, file)

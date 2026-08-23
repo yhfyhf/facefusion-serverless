@@ -1,7 +1,7 @@
 {
   "input": {
     "source_url": "https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/1722.png&w=350&h=254",
-    "target_url": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Yi_Jianlian_Wizards_2.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original",
+    "target_url": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Yi_Jianlian_Wizards_2.jpg",
     "return_base64": true
   }
 }
