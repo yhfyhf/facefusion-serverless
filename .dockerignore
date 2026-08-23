@@ -1,0 +1,11 @@
+.git
+.github
+.env
+*.env
+.runpod-serverless.env
+README.md
+outputs
+inputs
+__pycache__
+*.pyc
+.DS_Store

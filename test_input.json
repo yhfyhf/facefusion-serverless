@@ -1,0 +1,10 @@
+{
+  "input": {
+    "source_url": "https://example.com/source.jpg",
+    "target_url": "https://example.com/target.mp4",
+    "trim_start": 0,
+    "trim_end": 80,
+    "return_base64": false,
+    "params": {}
+  }
+}

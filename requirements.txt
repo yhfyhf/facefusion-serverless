@@ -1,0 +1,2 @@
+runpod~=1.7.13
+requests~=2.32.5
