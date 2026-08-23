@@ -1,7 +1,7 @@
 FROM nvidia/cuda:12.8.1-cudnn-runtime-ubuntu24.04
 
 ARG FACEFUSION_REPO=https://github.com/facefusion/facefusion.git
-ARG FACEFUSION_VERSION=3.7.1
+ARG FACEFUSION_VERSION=3.8.2
 ARG PRELOAD_MODELS=1
 
 ENV DEBIAN_FRONTEND=noninteractive

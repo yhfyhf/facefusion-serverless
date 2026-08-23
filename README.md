@@ -21,6 +21,8 @@ ENABLE_FACE_ENHANCER=0
 OUTPUT_VIDEO_ENCODER=libx264
 ```
 
+The default image builds from FaceFusion `3.8.2`.
+
 By default, jobs process frames `0..80` for quality checks. Pass `trim_end: null`
 or a larger frame number for longer jobs.
 
