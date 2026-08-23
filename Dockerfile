@@ -29,7 +29,7 @@ RUN if [ -s /workspace/patches/facefusion.patch ]; then \
   fi
 
 WORKDIR /facefusion
-RUN python install.py cuda --skip-conda
+RUN python install.py cuda@12 --skip-conda
 
 WORKDIR /workspace
 COPY requirements.txt /workspace/requirements.txt
