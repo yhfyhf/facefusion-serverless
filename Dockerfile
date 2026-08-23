@@ -1,5 +1,6 @@
 FROM nvidia/cuda:12.8.1-cudnn-runtime-ubuntu24.04
 
+ARG FACEFUSION_REPO=https://github.com/facefusion/facefusion.git
 ARG FACEFUSION_VERSION=3.7.1
 ARG PRELOAD_MODELS=1
 
@@ -20,7 +21,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
   && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/facefusion/facefusion.git --branch "${FACEFUSION_VERSION}" --single-branch /facefusion
+RUN git clone "${FACEFUSION_REPO}" --branch "${FACEFUSION_VERSION}" --single-branch /facefusion
+
+COPY patches /workspace/patches
+RUN if [ -s /workspace/patches/facefusion.patch ]; then \
+    cd /facefusion && git apply /workspace/patches/facefusion.patch; \
+  fi
 
 WORKDIR /facefusion
 RUN python install.py cuda --skip-conda

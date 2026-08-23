@@ -46,6 +46,29 @@ For tiny tests only, set `return_base64: true`.
 
 ## Publish Image
 
+## Custom FaceFusion Source
+
+If you need custom FaceFusion source changes, do not edit a running pod by hand
+for production. Use one of these reproducible paths:
+
+1. Fork FaceFusion and build with your fork:
+
+```bash
+docker build \
+  --build-arg FACEFUSION_REPO=https://github.com/yhfyhf/facefusion.git \
+  --build-arg FACEFUSION_VERSION=your-branch-or-tag \
+  .
+```
+
+2. Or save your source changes as `patches/facefusion.patch`. The Dockerfile
+applies that patch after cloning FaceFusion.
+
+To export a patch from a live RunPod pod before shutting it down:
+
+```bash
+scripts/export_facefusion_patch_from_runpod.sh root@POD_IP -p POD_PORT -i ~/.ssh/id_ed25519
+```
+
 This repo publishes to:
 
 ```bash
