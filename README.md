@@ -21,7 +21,8 @@ ENABLE_FACE_ENHANCER=0
 OUTPUT_VIDEO_ENCODER=libx264
 ```
 
-The default image builds from FaceFusion `3.8.2`.
+The default image builds from `https://github.com/yhfyhf/Facefusion.git`
+branch `yhf-custom-3.8.2`, which is based on FaceFusion `3.8.2`.
 
 By default, jobs process frames `0..80` for quality checks. Pass `trim_end: null`
 or a larger frame number for longer jobs.
