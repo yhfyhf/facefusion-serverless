@@ -51,6 +51,14 @@ def _suffix_from_url(url: str, fallback: str) -> str:
     return suffix if suffix else fallback
 
 
+def _is_video_path(path: Path) -> bool:
+    return path.suffix.lower() in {".mp4", ".mov", ".m4v", ".webm", ".avi", ".mkv"}
+
+
+def _output_suffix_for_target(path: Path) -> str:
+    return ".mp4" if _is_video_path(path) else (path.suffix or ".png")
+
+
 def _download(url: str, path: Path) -> None:
     with requests.get(url, stream=True, timeout=(15, 300)) as response:
         response.raise_for_status()
@@ -84,10 +92,12 @@ def handler(job: dict) -> dict:
         workdir = Path(tmpdir)
         source_path = workdir / f"source{_suffix_from_url(source_url, '.jpg')}"
         target_path = workdir / f"target{_suffix_from_url(target_url, '.mp4')}"
-        output_path = workdir / "output.mp4"
 
         _download(source_url, source_path)
         _download(target_url, target_path)
+
+        is_video_job = _is_video_path(target_path)
+        output_path = workdir / f"output{_output_suffix_for_target(target_path)}"
 
         env = os.environ.copy()
         env.update(DEFAULT_ENV)
@@ -98,19 +108,26 @@ def handler(job: dict) -> dict:
                 value = params[key]
                 env[env_key] = _bool_env(value) if key == "enable_enhancer" else str(value)
 
-        trim_start = job_input.get("trim_start", params.get("trim_start", 0))
-        trim_end = job_input.get("trim_end", params.get("trim_end", 80))
-        if trim_start is not None:
-            env["TRIM_FRAME_START"] = str(trim_start)
-        if trim_end is not None:
-            env["TRIM_FRAME_END"] = str(trim_end)
-
-        command = [
-            "/workspace/run_facefusion_video.sh",
-            str(source_path),
-            str(target_path),
-            str(output_path),
-        ]
+        if is_video_job:
+            trim_start = job_input.get("trim_start", params.get("trim_start", 0))
+            trim_end = job_input.get("trim_end", params.get("trim_end", 80))
+            if trim_start is not None:
+                env["TRIM_FRAME_START"] = str(trim_start)
+            if trim_end is not None:
+                env["TRIM_FRAME_END"] = str(trim_end)
+            command = [
+                "/workspace/run_facefusion_video.sh",
+                str(source_path),
+                str(target_path),
+                str(output_path),
+            ]
+        else:
+            command = [
+                "/workspace/run_facefusion_image.sh",
+                str(source_path),
+                str(target_path),
+                str(output_path),
+            ]
         completed = subprocess.run(
             command,
             env=env,
@@ -140,6 +157,8 @@ def handler(job: dict) -> dict:
 
         result: dict = {
             "ok": True,
+            "job_type": "video" if is_video_job else "image",
+            "output_filename": output_path.name,
             "size_bytes": output_path.stat().st_size,
             "elapsed_sec": round(time.time() - started, 2),
             "log_tail": log_tail,

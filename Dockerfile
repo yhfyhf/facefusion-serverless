@@ -36,8 +36,9 @@ COPY requirements.txt /workspace/requirements.txt
 RUN python -m pip install --no-cache-dir -r /workspace/requirements.txt
 
 COPY run_facefusion_video.sh /workspace/run_facefusion_video.sh
+COPY run_facefusion_image.sh /workspace/run_facefusion_image.sh
 COPY handler.py /workspace/handler.py
-RUN chmod +x /workspace/run_facefusion_video.sh
+RUN chmod +x /workspace/run_facefusion_video.sh /workspace/run_facefusion_image.sh
 
 RUN if [ "${PRELOAD_MODELS}" = "1" ]; then \
     cd /facefusion && python facefusion.py force-download --download-scope lite --download-providers huggingface github; \
