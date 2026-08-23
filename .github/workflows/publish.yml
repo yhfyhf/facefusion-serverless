@@ -18,6 +18,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -35,4 +36,4 @@ jobs:
             ghcr.io/yhfyhf/facefusion-serverless:latest
             ghcr.io/yhfyhf/facefusion-serverless:${{ github.sha }}
           build-args: |
-            PRELOAD_MODELS=1
+            PRELOAD_MODELS=0
