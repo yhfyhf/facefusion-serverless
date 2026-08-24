@@ -20,11 +20,12 @@ fi
 
 export RUNPOD_MODEL_VOLUME_NAME="${RUNPOD_MODEL_VOLUME_NAME:-facefusion-model-cache}"
 export RUNPOD_MODEL_VOLUME_SIZE_GB="${RUNPOD_MODEL_VOLUME_SIZE_GB:-20}"
-export RUNPOD_MODEL_VOLUME_DATACENTER="${RUNPOD_MODEL_VOLUME_DATACENTER:-US-GA-1}"
+export RUNPOD_MODEL_VOLUME_DATACENTER="${RUNPOD_MODEL_VOLUME_DATACENTER:-US-IL-1}"
 
 python3 - <<'PY'
 import json
 import os
+import urllib.error
 import urllib.request
 
 api_key = os.environ["RUNPOD_API_KEY"]
@@ -37,8 +38,12 @@ headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/js
 def request(method, path, payload=None):
     body = json.dumps(payload).encode() if payload is not None else None
     req = urllib.request.Request(f"https://rest.runpod.io/v1/{path}", data=body, headers=headers, method=method)
-    with urllib.request.urlopen(req, timeout=60) as response:
-        return json.loads(response.read().decode())
+    try:
+        with urllib.request.urlopen(req, timeout=60) as response:
+            return json.loads(response.read().decode())
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode(errors="replace").strip()
+        raise RuntimeError(f"{method} /{path} failed with HTTP {exc.code}: {detail[:1500]}") from exc
 
 volumes = request("GET", "networkvolumes")
 volume = next((v for v in volumes if v.get("name") == name and v.get("dataCenterId") == datacenter), None)

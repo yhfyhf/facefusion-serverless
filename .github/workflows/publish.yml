@@ -10,6 +10,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'Dockerfile'
+      - 'handler.py'
+      - 'requirements.txt'
+      - 'run_facefusion_image.sh'
+      - 'run_facefusion_video.sh'
+      - 'start_worker.sh'
+      - 'patches/**'
 
 permissions:
   contents: read
