@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python-is-python3 \
     python3.12 \
     python3-pip \
+    util-linux \
   && rm -rf /var/lib/apt/lists/*
 
 RUN git clone "${FACEFUSION_REPO}" --branch "${FACEFUSION_VERSION}" --single-branch /facefusion
@@ -39,11 +40,12 @@ RUN python -m pip install --no-cache-dir -r /workspace/requirements.txt
 
 COPY run_facefusion_video.sh /workspace/run_facefusion_video.sh
 COPY run_facefusion_image.sh /workspace/run_facefusion_image.sh
+COPY start_worker.sh /workspace/start_worker.sh
 COPY handler.py /workspace/handler.py
-RUN chmod +x /workspace/run_facefusion_video.sh /workspace/run_facefusion_image.sh
+RUN chmod +x /workspace/run_facefusion_video.sh /workspace/run_facefusion_image.sh /workspace/start_worker.sh
 
 RUN if [ "${PRELOAD_MODELS}" = "1" ]; then \
     cd /facefusion && python facefusion.py force-download --download-scope lite --download-providers huggingface github; \
   fi
 
-CMD ["python", "-u", "/workspace/handler.py"]
+CMD ["/workspace/start_worker.sh"]
