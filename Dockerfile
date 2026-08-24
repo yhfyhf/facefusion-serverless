@@ -6,6 +6,7 @@ ARG PRELOAD_MODELS=1
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
+ENV PIP_NO_CACHE_DIR=1
 ENV PYTHONUNBUFFERED=1
 ENV FACEFUSION_DIR=/facefusion
 
@@ -29,7 +30,8 @@ RUN if [ -s /workspace/patches/facefusion.patch ]; then \
   fi
 
 WORKDIR /facefusion
-RUN python install.py cuda@12 --skip-conda
+RUN python install.py cuda@12 --skip-conda \
+  && rm -rf /root/.cache /tmp/*
 
 WORKDIR /workspace
 COPY requirements.txt /workspace/requirements.txt
